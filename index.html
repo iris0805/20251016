@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>H5P 成績分數顯示範例 (p5.js)</title>
+    
+    <!-- 引入 p5.js 函式庫 -->
+    <script>
+    
+      // 確保 H5P 和外部事件派發器已加載
+          if (H5P && H5P.externalDispatcher) {
+  
+          H5P.externalDispatcher.on('xAPI', function(event) {
+  
+              // 檢查事件是否包含分數信息（通常是 'completed' 或 'answered' 類型）
+              if (event.getScore() !== undefined && event.getMaxScore() > 0) {
+  
+                  const scoreData = {
+                      type: 'H5P_SCORE_RESULT',
+                      score: event.getScore(),
+                      maxScore: event.getMaxScore()
+                  };
+  
+                  // 使用 postMessage API 將分數傳遞給父層窗口
+                  // ！！！安全性提示：請將 'https://your-parent-domain.com' 替換為您的主網頁網域
+                  window.parent.postMessage(scoreData, 'https://cfchengit.github.io/20251016');
+  
+                  console.log('H5P 分數已發送給父層。');
+              }
+          });
+  
+      } else {
+          console.error('H5P 事件派發器未找到，無法追蹤分數。');
+      }
+  </script> 
+    
+    <style>
+        /* 讓內容置中方便查看 */
+        body { 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            min-height: 100vh; 
+            font-family: Arial, sans-serif;
+        }
+        #h5pContainer {
+            margin-top: 20px;
+        }
+        /* p5.js Canvas 會自動創建在 body 內 */
+    </style>
+</head>
+<body>
+    <h1>H5P 互動與 p5.js 成績顯示</h1>
+    
+    <div id="h5pContainer">
+        <!-- 嵌入 H5P 匯出檔案 -->
+        <!-- 將 src 設為 H5P 匯出的 HTML 檔名，例如 h5p_exported.html -->
+        <iframe 
+            id="h5pIframe" 
+            src="1.html" 
+            width="400" 
+            height="300" 
+            style="border: 2px solid #ccc;">
+        </iframe>
+    </div>
+    
+    <!-- 分數將顯示在 p5.js 創建的 Canvas 上 -->
+</body>
+</html>
